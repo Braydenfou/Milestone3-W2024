@@ -7,12 +7,12 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(
-        "Temperature API Policy",
-        builder =>
-        {
-            builder.WithOrigins("https://localhost:6002");
-        });
+    options.AddPolicy("Temperature API Policy", policy =>
+    {
+        policy.WithOrigins("http://localhost:6001") //changed due to bugs
+              .AllowAnyMethod() //added this
+              .AllowAnyHeader(); //and this
+    });
 });
 
 var app = builder.Build();
@@ -26,11 +26,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("Temperature API Policy"); //using string from above
+
 app.MapGet("/temperature", () =>
 {
     return new Random().Next(30, 90);
 })
 .WithName("GetTemperature")
-.WithOpenApi();
+.WithOpenApi()
+.RequireCors("Temperature API Policy"); //cors is enabled
 
 app.Run();
