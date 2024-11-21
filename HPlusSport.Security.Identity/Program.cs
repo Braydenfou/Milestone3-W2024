@@ -75,6 +75,6 @@ app.MapGet("/api/hello", (HttpContext httpContext) =>
     return $"Hello {httpContext.User?.Identity?.Name}";
 })
     .WithOpenApi()
-    .RequireAuthorization();
+    .RequireAuthorization(); //auth
 
 app.Run();
